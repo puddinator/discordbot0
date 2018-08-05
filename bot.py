@@ -1,11 +1,15 @@
 import discord
 import youtube_dl
+import nltk
+from nltk.corpus import wordnet
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
 import random
 import requests
 import asyncio
+import sys
+import os
 
 client = commands.Bot(command_prefix='$')
 description = 'cool'
@@ -57,7 +61,7 @@ client.remove_command('help')
 
 @client.command()
 async def help(ctx):
-    embed = discord.Embed(title="cool bot", description="A Very Nice bot. List of commands are:", color=0xeee657)
+    embed = discord.Embed(title="Booty", description="Awesome bot! List of commands are:", color=0xeee657)
 
     embed.add_field(name="$add X Y", value="Gives the addition of **X** and **Y**", inline=False)
     embed.add_field(name="$multiply X Y", value="Gives the multiplication of **X** and **Y**", inline=False)
@@ -65,13 +69,35 @@ async def help(ctx):
     embed.add_field(name="$cat", value="Gives a cute cat gif to lighten up the mood.", inline=False)
     embed.add_field(name="$info", value="Gives a little info about the bot", inline=False)
     embed.add_field(name="$help", value="Gives this message", inline=False)
-    embed.add_field(name="$rnick discordmember 0/1", value="Gives users a nickname", inline=False)
+    embed.add_field(name="$rnick Member 0/1 Time/s", value="Gives users a nickname, 0 is verbose, 1 is silent", inline=False)
+    embed.add_field(name="$clear X", value="Clears an **X** amount of messages", inline=False)
+    embed.add_field(name="$Restart", value="Restarts Botty!", inline=False)
+    embed.add_field(name="$Define X", value="Defines **X**", inline=False)
+    embed.add_field(name="$Repeat X", value="Repeats **X**", inline=False)
 
     await ctx.send(embed=embed)
 
-@client.command(pass_context=True)
-async def rnick(ctx, member : discord.Member, silent : int = 1):
-    counter, runs = 0, 90
+
+@client.command()
+@commands.has_permissions(manage_messages=True)
+async def clear(ctx, amount: int = 10):
+    await ctx.channel.purge(limit=amount)
+    await ctx.send('{} {}'.format(amount, 'messages deleted'))
+
+@client.command()
+@commands.has_permissions(manage_guild=True)
+async def restart(ctx):
+    os.execv(sys.executable, ['python3'] + sys.argv)
+     
+@client.command()
+async def define(ctx, a):
+    define1 = wordnet.synsets(str(a))
+    await ctx.send(str(a) + ": " + define1[0].definition())
+
+@client.command()
+@commands.has_permissions(manage_messages=True)
+async def rnick(ctx, member : discord.Member, silent : int = 1, time : int = 30):
+    counter, runs = 0, time
     old_nick = member.display_name
     while True:
         new_nick = random.choice(response.content.splitlines()).decode("utf-8")
@@ -83,8 +109,20 @@ async def rnick(ctx, member : discord.Member, silent : int = 1):
             break
         await asyncio.sleep(10)
 
+@client.command()
+async def repeat(ctx, arg):
+    await ctx.send(arg)
 
-@client.command(pass_context=True)
+@client.command()
+async def roulette(ctx):
+    lucky = random.randint(0,21)
+    if (lucky%4 == 0):
+        await ctx.send('The trigger is pulled, and the hand-cannon goes off with a roar! You lie dead in the chat.')
+    else:
+        await ctx.send('The trigger is pulled, and the revolver clicks. You have lived to survive and see another day!')
+
+
+@client.command()
 async def join(ctx):
     voicechannel = ctx.author.voice.channel
     await voicechannel.connect()
