@@ -129,4 +129,4 @@ async def join(ctx):
     await voicechannel.connect()
 
 
-client.run('NDc1MTgyOTY4NDQ5NTMxOTE2.Dkf5ew.dOAxpsKyYyssZt5UBybROMCcUL4')
+client.run('NDc1MTgyOTY4NDQ5NTMxOTE2.Dkgj_w.xgb7QY9kQ5970fdHr_M8SZW9Kkw')
