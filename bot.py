@@ -87,6 +87,7 @@ async def clear(ctx, amount: int = 10):
 @client.command()
 @commands.has_permissions(manage_guild=True)
 async def restart(ctx):
+    await ctx.send('Botty is restarting...')
     os.execv(sys.executable, ['python3'] + sys.argv)
      
 @client.command()
