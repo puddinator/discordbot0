@@ -1,51 +1,63 @@
 import discord
+import youtube_dl
 from discord.ext import commands
+from discord.ext.commands import Bot
+from discord.voice_client import VoiceClient
+import random
+import requests
+import asyncio
 
-bot = commands.Bot(command_prefix='$')
+client = commands.Bot(command_prefix='$')
+description = 'cool'
 
-@bot.event
+word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
+response = requests.get(word_site)
+
+players = {}
+
+@client.event
 async def on_ready():
     print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
+    print(client.user.name)
+    print(client.user.id)
     print('------')
 
-@bot.command()
+@client.command()
 async def add(ctx, a: int, b: int):
     await ctx.send(a+b)
 
-@bot.command()
+@client.command()
 async def multiply(ctx, a: int, b: int):
     await ctx.send(a*b)
 
-@bot.command()
+@client.command()
 async def greet(ctx):
     await ctx.send(":smiley: :wave: Hello, there!")
 
-@bot.command()
+@client.command()
 async def cat(ctx):
     await ctx.send("https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif")
 
-@bot.command()
+@client.command()
 async def info(ctx):
-    embed = discord.Embed(title="nice bot", description="Nicest bot there is ever.", color=0xeee657)
+    embed = discord.Embed(title="coolest bot", description="Better than Athena", color=0xee657)
     
     # give info about you here
-    embed.add_field(name="Author", value="<YOUR-USERNAME>")
+    embed.add_field(name="Author", value="Puddin")
     
     # Shows the number of servers the bot is member of.
-    embed.add_field(name="Server count", value=f"{len(bot.guilds)}")
+    embed.add_field(name="Server count", value=f"{len(client.guilds)}")
 
     # give users a link to invite thsi bot to their server
-    embed.add_field(name="Invite", value="[Invite link](<insert your OAuth invitation link here>)")
+    embed.add_field(name="Invite", value="[Invite link](<https://discordapp.com/api/oauth2/authorize?client_id=475182968449531916&permissions=0&scope=bot>)")
 
     await ctx.send(embed=embed)
 
-bot.remove_command('help')
+client.remove_command('help')
 
-@bot.command()
+@client.command()
 async def help(ctx):
-    embed = discord.Embed(title="nice bot", description="A Very Nice bot. List of commands are:", color=0xeee657)
+    embed = discord.Embed(title="cool bot", description="A Very Nice bot. List of commands are:", color=0xeee657)
 
     embed.add_field(name="$add X Y", value="Gives the addition of **X** and **Y**", inline=False)
     embed.add_field(name="$multiply X Y", value="Gives the multiplication of **X** and **Y**", inline=False)
@@ -53,7 +65,29 @@ async def help(ctx):
     embed.add_field(name="$cat", value="Gives a cute cat gif to lighten up the mood.", inline=False)
     embed.add_field(name="$info", value="Gives a little info about the bot", inline=False)
     embed.add_field(name="$help", value="Gives this message", inline=False)
+    embed.add_field(name="$rnick discordmember 0/1", value="Gives users a nickname", inline=False)
 
     await ctx.send(embed=embed)
 
-bot.run('NDc1MTgyOTY4NDQ5NTMxOTE2.Dkb-MA.skbs9W1IsXkax-xLOrhGh9ed380')
+@client.command(pass_context=True)
+async def rnick(ctx, member : discord.Member, silent : int = 1):
+    counter, runs = 0, 90
+    old_nick = member.display_name
+    while True:
+        new_nick = random.choice(response.content.splitlines()).decode("utf-8")
+        if silent == 0:
+            await ctx.send(str(old_nick) + " (" + str(member.name) + ") "+ " is now " + new_nick)
+        await member.edit(nick = new_nick)
+        counter += 1
+        if (counter) >= runs: 
+            break
+        await asyncio.sleep(10)
+
+
+@client.command(pass_context=True)
+async def join(ctx):
+    voicechannel = ctx.author.voice.channel
+    await voicechannel.connect()
+
+
+client.run('NDc1MTgyOTY4NDQ5NTMxOTE2.Dkf5ew.dOAxpsKyYyssZt5UBybROMCcUL4')
