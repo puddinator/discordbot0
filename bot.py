@@ -128,5 +128,5 @@ async def join(ctx):
     voicechannel = ctx.author.voice.channel
     await voicechannel.connect()
 
+client.run(str(os.environ.get('TOKEN')))
 
-client.run('NDc1MTgyOTY4NDQ5NTMxOTE2.Dkgj_w.xgb7QY9kQ5970fdHr_M8SZW9Kkw')
